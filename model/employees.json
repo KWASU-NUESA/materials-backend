@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "firstname": "David",
+        "lastname": "Olowu",
+        "role": "NUESA President",
+        "description": "nuesa president 2023"
+    },   
+    {
+        "id": 2,
+        "firstname": "WM",
+        "lastname": "Kareem",
+        "role": "NUESA Staff Adviser",
+        "description": "NUESA staff Adviser"
+    }  
+]
