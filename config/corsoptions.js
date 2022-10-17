@@ -1,5 +1,5 @@
  //cross origin resource sharing
-const whitelist = ['https//:www.nuesakwasu.edu.ng','http://127.0.0.1:5500'/* remove */ ]
+const whitelist = require('./allowed')
 const corsOptions = {
     origin: (origin,callback) => {
         if(whitelist.indexOf(origin) !== -1 || !origin  ){
