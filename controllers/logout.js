@@ -8,7 +8,6 @@ const fsPromises = require('fs').promises
 const path = require('path')
 
 
-
 const handlelogout = async(req, res)=>{
     //on client also delete the accessToken
 
@@ -28,8 +27,8 @@ const handlelogout = async(req, res)=>{
     const otherUsers = usersDB.users.filter(person => person.refreshToken !== found.refreshToken)
     const currentUser = {...found, refreshToken: ''}
     usersDB.setUser([...otherUsers, currentUser])
-    await fsPromises.writeFile(path.join(__dirname, '..', 'model','users.js'), JSON.stringify(usersDB.users))
-    res.clearCookie('jwt', {httpOnly: true})
+    await fsPromises.writeFile(path.join(__dirname, '..', 'model','users.json'), JSON.stringify(usersDB.users))
+    res.clearCookie('jwt', {httpOnly: true, sameSite: 'None', secure: true})
     res.sendStatus(204)
 }
 module.exports = handlelogout 

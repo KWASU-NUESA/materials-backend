@@ -1,7 +1,3 @@
-const {format} = require('date-fns')
-const {v4: uuid} = require('uuid')
-const fs = require('fs')
-const fsPromises = require('fs').promises
 const path = require('path')
 const {logger, errlogger} = require('./middleware/logEvents')
 const express = require('express')
@@ -9,12 +5,14 @@ const jwtverify = require('./middleware/verifyJwt')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const corsOptions = require('./config/corsoptions')
+const credentials = require('./middleware/credentials')
 const app = express()
 const PORT = process.env.PORT || 300
 
 //middleware
 //my middlewares
 app.use(logger)
+app.use(credentials)
 app.use(cors(corsOptions)) 
 
 
@@ -46,15 +44,15 @@ app.use(jwtverify)
 app.use('/api', require('./routes/api/staff'))
 
 //404- unauthorized doesn't matter 😅
-app.all('*', (req,res)=>{
-    if(req.accepts('html')){
-        res.status(404).sendFile(path.join(__dirname, '..','views','404.html'))
-        }else if(req.accepts('json')){
-            res.json({'message': '404: ish wrong route fam!'})
-        }else{
-            res.type('txt').send('404 not found')
-        }
-})
+// app.all('*', (req,res)=>{
+//     if(req.accepts('html')){
+//         res.status(404).sendFile(path.join(__dirname, '..','views','404.html'))
+//         }else if(req.accepts('json')){
+//             res.json({'message': '404: ish wrong route fam!'})
+//         }else{
+//             res.type('txt').send('404 not found')
+//         }
+// })
 
 //error logger
 app.use(errlogger)
