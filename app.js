@@ -1,14 +1,19 @@
 const path = require('path')
 const {logger, errlogger} = require('./middleware/logEvents')
 const express = require('express')
-const jwtverify = require('./middleware/verifyJwt')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const corsOptions = require('./config/corsoptions')
 const credentials = require('./middleware/credentials')
 const app = express()
+const mongoose = require('mongoose')
+const connectDb  =require('./config/dbCon')
+const routeprotect = require('./middleware/normsprotect')
 const PORT = process.env.PORT || 300
 
+
+//connect to mongoDB
+connectDb();
 //middleware
 //my middlewares
 app.use(logger)
@@ -35,29 +40,20 @@ app.use(express.static(path.join(__dirname,'/public')))
 app.use('/', require('./routes/main'))
 
 //API dir
-app.use('/user', require('./routes/api/user'))
+// app.use(routeprotect)
+app.use('/register', require('./routes/api/user'))
 app.use('/auth', require('./routes/api/auth'))
 app.use('/refresh', require('./routes/api/refresh'))
 app.use('/logout', require('./routes/api/logout'))
 
-app.use(jwtverify)
-app.use('/api', require('./routes/api/staff'))
+// app.use(jwtverify)
+app.use('/staff', require('./routes/api/staff'))
 
-//404- unauthorized doesn't matter 😅
-// app.all('*', (req,res)=>{
-//     if(req.accepts('html')){
-//         res.status(404).sendFile(path.join(__dirname, '..','views','404.html'))
-//         }else if(req.accepts('json')){
-//             res.json({'message': '404: ish wrong route fam!'})
-//         }else{
-//             res.type('txt').send('404 not found')
-//         }
-// })
 
 //error logger
 app.use(errlogger)
 
-
-app.listen(PORT, ()=>{
-    console.log(`listening on port ${PORT}`)
+mongoose.connection.once('open', ()=>{
+    console.log('connected to MongoDB')
+    app.listen(PORT, ()=>console.log(`listening on port ${PORT}`))
 })

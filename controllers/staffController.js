@@ -1,64 +1,75 @@
-const data = {
-    staff: require('../model/employees.json'),
-    setStaff: function (data){this.staff = data}}
-
-const getAllStaff = (req,res)=>{
-    res.json(data.staff)
+const Staff = require('../model/Staff')
+const getAllStaff = async(req,res)=>{
+    const staff = await Staff.find()
+    if(!staff) return res.status(204).json({'message':'No staff found'})
+    res.json(staff)
 }
 
 
 //create new staff
-const createNewStaff = (req,res)=>{
-    const newStaff = {
-        id: data.staff[data.staff.length - 1].id+1 || 1,
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        role: req.body.role,
-        description: req.body.description
+const createNewStaff = async(req,res)=>{
+    if(!req?.body?.firstname || !req?.body?.lastname || !req?.body?.position || !req?.body?.department || !req?.body?.description || !req?.body?.picture){
+        return res.status(400).json({})
     }
-    if(!newStaff.firstname || !newStaff.lastname){
-        return res.status(400).json({'message':'Awa o rin kan kan oo, First and lastname required'})
-    }
-    data.setStaff([...data.staff, newStaff])
-    res.json(data.staff)
+    try{
+        const result = await Staff.create({
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            department: req.body.department,
+            description: req.body.description,
+            position: req.body.position,
+            picture: req.body.picture
+        })
+        res.status(201).json(result)
+    }catch(err){
+            console.log(err)
+        }
+   
 }
 
 
 
 //update staff
-const updateStaff = (req, res)=>{
-   const staff = data.staff.find(sta => sta.id === parseInt(req.body.id))
-   if(!staff){
-    return res.status(400).json({"message": `Employee ID ${req.body.id} not found`})
+const updateStaff = async (req, res)=>{
+    if(!req?.body?.id){
+        return res.status(400).json({'message': "ID required"})
+    }
+    const staff = await Staff.findOne({_id: req.body.id}).exec()
+    if(!staff){
+    return res.status(204).json({"message": `No staff matches ${req.body.id}`})
    }
-   if(req.body.firstname) staff.firstname = req.body.firstname
-   if(req.body.lastname) staff.lastname = req.body.lastname
-   if(req.body.role) staff.role = req.body.role
-   if(req.body.desc) staff.desc = req.body.desc
-   const filteredArray = data.staff.filter(sta => sta.id !== parseInt(req.body.id))
-   const unsortedArray = [...filteredArray, staff]
-   data.setStaff(unsortedArray.sort((a,b)=> a.id>b.id? 1 : a.id < b.id ? -1 : 0))
-   res.json(data.staff)
+   if(req.body?.firstname) staff.firstname = req.body.firstname
+   if(req.body?.lastname) staff.lastname = req.body.lastname
+   if(req.body?.position) staff.position = req.body.position
+   if(req.body?.department) staff.department = req.body.department
+   if(req.body?.description) staff.description = req.body.description
+   if(req.body?.picture) staff.picture = req.body.picture
+
+   const result = await staff.save()
+   res.json(result)
 }
 
 
 //delete staff
-const deleteStaff = (req, res)=>{ //delete all ??
-    const staff = data.staff.find(sta => sta.id === req.body.id)
-    if(!staff){
-        return res.status(400).json({'message':`user with id ${req.body.id} not found`})
+const deleteStaff =  async(req, res)=>{
+    if(!req?.body?.id){
+        return res.status(400).json({'message': "staff ID required"})
     }
-    const filteredArray = data.staff.filter(sta => sta.id !== parse(req.body.id))
-    data.setStaff(...filteredArray)
-    res.json(data.staff)
+    const staff = await Staff.findOne({_id: req.body.id}).exec()
+    if(!staff){
+        return res.status(204).json({"message": `No staff matches ${req.body.id}`})
+    }
+   const result = await staff.deleteOne({_id: req.body.id})
+    res.json(result)
 }
 
 
 //get single staff
-const getSingleStaff = (req, res)=>{
-    const staff = data.staff.find(sta => sta.id === parseInt(req.params.id))
+const getSingleStaff = async (req, res)=>{
+    if(!req?.params?.id) return res.status(400).json({'message':'staff id required'})
+    const staff =await Staff.findOne({_id: req.params.id})
     if(!staff){
-        res.status(400).json({'message':`Employee with ${req.params.id} doesn't exist`})
+        res.status(204).json({'message':`Not found: staff with ${req.params.id} doesn't exist`})
     }
     res.json(staff)
 }

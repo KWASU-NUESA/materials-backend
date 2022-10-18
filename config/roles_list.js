@@ -3,3 +3,5 @@ const ROLES_LIST = {
     "Editor": 1984,
     "USer": 2001
 }
+
+module.exports = ROLES_LIST
