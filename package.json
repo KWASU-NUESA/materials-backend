@@ -7,6 +7,9 @@
     "dev": "nodemon app",
     "start": "node app"
   },
+  "engines": {
+    "node": "16.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/KWASU-NUESA/backend.git"
