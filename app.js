@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname,'/public')))
 app.use('/', require('./routes/main'))
 
 //API dir
-// app.use(routeprotect)
+app.use(routeprotect)
 app.use('/register', require('./routes/api/user'))
 app.use('/auth', require('./routes/api/auth'))
 app.use('/refresh', require('./routes/api/refresh'))
