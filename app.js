@@ -48,6 +48,7 @@ app.use('/logout', require('./routes/api/logout'))
 
 // app.use(jwtverify)
 app.use('/staff', require('./routes/api/staff'))
+app.use('/pdf', require('./routes/api/pdf'))
 
 
 //error logger
