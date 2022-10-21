@@ -17,11 +17,11 @@ const getAllStaff = async(req,res)=>{
 //create new staff
 const createNewStaff = async(req,res)=>{
     const form =new Formidable.IncomingForm()
-    // res.status(201).json({"form":form})
     const uploadsFolder = path.join(__dirname, '..', 'uploads')
     form.maxFileSize = 5 * 1024 * 1024
     form.uploadDir = uploadsFolder
     form.parse(req, async(err, fields, files)=>{
+        console.log(files)
         if(err) return res.json({ok:false, msg:"Error parsing the files"})
         const file = files.files
         const types = ['image/png', 'image/jpeg', 'image/jpg']
