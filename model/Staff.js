@@ -18,8 +18,8 @@ const staffSchema = new schema({
         type: String,
         required: true
     },
-    description: {
-        type: String,
+    category: {
+        type: Number,
         required: true
     },
     picture: {

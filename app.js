@@ -36,9 +36,6 @@ app.use(express.static(path.join(__dirname,'/public')))
 
 
 // routes
-// main dir - put last cos of 404
-app.use('/', require('./routes/main'))
-
 //API dir
 app.use(routeprotect)
 app.use('/register', require('./routes/api/user'))

@@ -22,12 +22,12 @@ const createNewStaff = async(req,res)=>{
     form.uploadDir = uploadsFolder
     form.parse(req, async(err, fields, files)=>{
         console.log(files)
-        if(err) return res.json({ok:false, msg:"Error parsing the files"})
+        if(err) return res.json({ok:false, message:"Error parsing the files"})
         const file = files.files
         const types = ['image/png', 'image/jpeg', 'image/jpg']
         const typeisvalid = checkFileType(file, types)
         if(!typeisvalid){
-            console.log("file type is invalid")
+            return res.status(400).json({error:`Invalid file type, Images only!`})
         }
         const filename = encodeURIComponent(file.originalFilename.replace(/&. *;/g, '-'))
         try{
@@ -37,13 +37,13 @@ const createNewStaff = async(req,res)=>{
                 firstname: fields.firstname,
                 lastname: fields.lastname,
                 department: fields.department,
-                description: fields.description,
+                category: fields.category,
                 position: fields.position,
                 picture: filepath
             })
-            res.status(201).json(result)
+            return res.status(201).json(result)
         }catch(err){
-                console.log(err)
+                return res.status(400).json({error:err.message})
             }
     }) 
 }
@@ -52,23 +52,43 @@ const createNewStaff = async(req,res)=>{
 
 //update staff
 const updateStaff = async (req, res)=>{
-    if(!req.body.id){
-        console.log(req.body)
-        return res.status(400).json({'message': "ID required"})
-    }
-    const staff = await Staff.findOne({_id: req.body.id}).exec()
-    if(!staff){
-    return res.status(204).json({"message": `No staff matches ${req.body.id}`})
-   }
-   if(req.body.firstname) staff.firstname = req.body.firstname
-   if(req.body.lastname) staff.lastname = req.body.lastname
-   if(req.body.position) staff.position = req.body.position
-   if(req.body.department) staff.department = req.body.department
-   if(req.body.description) staff.description = req.body.description
-   if(req.body.picture) return res.json({"message":"can't update image, delete record and re-enter"})
 
-   const result = await staff.save()
-   res.json(result)
+    const form =new Formidable.IncomingForm()
+    const uploadsFolder = path.join(__dirname, '..', 'uploads')
+    form.maxFileSize = 5 * 1024 * 1024
+    form.uploadDir = uploadsFolder
+    form.parse(req, async(err, fields, files)=>{
+        if(err) return res.json({ok:false, message:"Error parsing the files"})
+        const staff = await Staff.findOne({_id: fields.id}).exec()
+        if(files){
+        const file = files.files
+        const types = ['image/png', 'image/jpeg', 'image/jpg']
+        const typeisvalid = checkFileType(file, types)
+        if(!typeisvalid){
+            return res.status(400).json({error:`Invalid file type, Images only!`})
+        }
+        const filename = encodeURIComponent(file.originalFilename.replace(/&. *;/g, '-'))
+        try{
+            fsPromises.rename(file.filepath, path.join(uploadsFolder, filename))
+            const filepath = path.join(__dirname, '..', 'uploads', filename)
+            if(!staff){
+            return res.status(204).json({"message": `No staff matches ${req.body.id}`})
+            }
+            await fsPromises.unlink(staff.picture)
+            staff.picture = filepath
+        }catch(err){
+                return res.status(400).json({error:err.message})
+            }
+        }
+        if(fields.firstname) staff.firstname = fields.firstname
+        if(fields.lastname) staff.lastname = fields.lastname
+        if(fields.position) staff.position = fields.position
+        if(fields.department) staff.department = fields.department
+        if(fields.category) staff.category = fields.category
+
+        await staff.save()
+        return res.status(201).json({staff})
+    })
 }
 
 
@@ -79,10 +99,10 @@ const deleteStaff =  async(req, res)=>{
     }
     const staff = await Staff.findOne({_id: req.body.id}).exec()
     if(!staff){
-        return res.status(204).json({"message": `No staff matches ${req.body.id}`})
+        return res.status(204).json({message: `No staff matches ${req.body.id}`})
     }
-   const result = await staff.deleteOne({_id: req.body.id})
-    res.json(result)
+   await staff.deleteOne({_id: req.body.id})
+    res.json({message:"deleted record"})
 }
 
 
@@ -93,7 +113,7 @@ const getSingleStaff = async (req, res)=>{
     if(!staff){
         res.status(204).json({'message':`Not found: staff with ${req.params.id} doesn't exist`})
     }
-    res.json(staff)
+    res.json({staff})
 }
 
 module.exports = {deleteStaff, updateStaff, createNewStaff, getAllStaff, getSingleStaff}
