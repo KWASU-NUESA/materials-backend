@@ -8,5 +8,5 @@ router.route('/')
     .put(updatePDF)
     .delete(deletePDF)
 
-router.get('/:id&:index&:category', deleteOneFile)
+router.delete('/:id&:index&:category', deleteOneFile)
 module.exports = router
