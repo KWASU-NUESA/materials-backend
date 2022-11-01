@@ -21,7 +21,6 @@ const createNewStaff = async(req,res)=>{
     form.maxFileSize = 5 * 1024 * 1024
     form.uploadDir = uploadsFolder
     form.parse(req, async(err, fields, files)=>{
-        console.log(files)
         if(err) return res.json({ok:false, message:"Error parsing the files"})
         const file = files.files
         const types = ['image/png', 'image/jpeg', 'image/jpg']
@@ -31,15 +30,14 @@ const createNewStaff = async(req,res)=>{
         }
         const filename = encodeURIComponent(file.originalFilename.replace(/&. *;/g, '-'))
         try{
-            fsPromises.rename(file.filepath, path.join(uploadsFolder, filename))
-            const filepath = path.join(__dirname, '..', 'uploads', filename)
+            fsPromises.rename(file.filepath, path.join(uploadsFolder, filename))    
             const result = await Staff.create({
                 firstname: fields.firstname,
                 lastname: fields.lastname,
                 department: fields.department,
                 category: fields.category,
                 position: fields.position,
-                picture: filepath
+                picture: filename
             })
             return res.status(201).json(result)
         }catch(err){
@@ -70,12 +68,12 @@ const updateStaff = async (req, res)=>{
         const filename = encodeURIComponent(file.originalFilename.replace(/&. *;/g, '-'))
         try{
             fsPromises.rename(file.filepath, path.join(uploadsFolder, filename))
-            const filepath = path.join(__dirname, '..', 'uploads', filename)
+            
             if(!staff){
             return res.status(204).json({"message": `No staff matches ${req.body.id}`})
             }
             await fsPromises.unlink(staff.picture)
-            staff.picture = filepath
+            staff.picture = filename
         }catch(err){
                 return res.status(400).json({error:err.message})
             }
