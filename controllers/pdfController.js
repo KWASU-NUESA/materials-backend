@@ -42,9 +42,8 @@ const updatePDF = async (req, res) => {
                 try{
                     fsPromises.rename(file.filepath, path.join(uploadFolder,filename))
 
-                    const filepath = path.join(__dirname,'..','public','pdfs',filename)
-                    if(category === 'questions') pdf.questions.push(filepath)
-                    else if(category === 'textbooks') pdf.textbooks.push(filepath)
+                    if(category === 'questions') pdf.questions.push(filename)
+                    else if(category === 'textbooks') pdf.textbooks.push(filename)
                     else return res.status(400).json({message:'category is required'})
 
 
@@ -62,9 +61,8 @@ const updatePDF = async (req, res) => {
             try{
                 fsPromises.rename(file.filepath, path.join(uploadFolder,filename))
 
-                const filepath = path.join(__dirname,'..','public','pdfs',filename)
-                if(category === 'questions') pdf.questions.push(filepath)
-                    else if(category === 'textbooks') pdf.textbooks.push(filepath)
+                if(category === 'questions') pdf.questions.push(filename)
+                    else if(category === 'textbooks') pdf.textbooks.push(filename)
                     else return res.status(400).json({message:'category is required'})
 
 
