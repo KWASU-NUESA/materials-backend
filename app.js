@@ -30,7 +30,7 @@ app.use(cookieParser())
 
 
 //allow all static files in public
-app.use(express.static('public'))
+// app.use(express.static('public'))
 app.use('/public',express.static('public'))
 app.use('/uploads',express.static('uploads'))
 
