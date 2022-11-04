@@ -31,8 +31,7 @@ app.use(cookieParser())
 
 //allow all static files in public
 app.use(express.static('public'))
-app.use('/public',express.static('public'))
-app.use('/pdfs',express.static(path.join(__dirname, 'public','pdfs')))
+app.use('/public',express.static(path.join(__dirname, 'public')))
 app.use('/uploads',express.static('uploads'))
 
 

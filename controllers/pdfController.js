@@ -57,7 +57,7 @@ const updatePDF = async (req, res) => {
         const types = ['application/pdf']
         const valid = checkFile(file, types)
         if(!valid) return res.status(400).json({msg:`Invalid file type inlcuded`})
-        const filename = encodeURIComponent(file.originalFilename.replace(/&. *;/g, '-'))
+        const filename = file.originalFilename
             try{
                 fsPromises.rename(file.filepath, path.join(uploadFolder,filename))
 
