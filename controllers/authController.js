@@ -16,7 +16,7 @@ const handlelogin = async(req, res)=>{
     }else{
         found = await users.findOne({username: user}).exec()
     }
-    if(!found) return res.sendStatus(401) //
+    if(!found) return res.sendStatus(401) 
     //evaluate password
     match = await bcrypt.compare(password, found.password)
     if(match){
@@ -36,7 +36,6 @@ const handlelogin = async(req, res)=>{
         //saving refreshToken with currrent user
         found.refreshToken = refreshToken
         const result = await found.save()
-        console.log(result)
 
         res.cookie('jwt', refreshToken, {httpOnly:true,sameSite:'None', maxAge: 24*60*60*1000})
         res.json({accessToken})

@@ -1,10 +1,7 @@
 const Staff = require('../model/Staff')
-const express = require('express')
-const app = express()
 const checkFileType = require('../middleware/checkFileType')
 const Formidable = require('formidable')
 const path = require('path')
-const fs = require('fs')
 const fsPromises = require('fs').promises
 const getAllStaff = async(req,res)=>{
     const staff = await Staff.find()
@@ -28,7 +25,7 @@ const createNewStaff = async(req,res)=>{
         if(!typeisvalid){
             return res.status(400).json({error:`Invalid file type, Images only!`})
         }
-        const filename = encodeURIComponent(file.originalFilename.replace(/&. *;/g, '-'))
+        const filename =file.originalFilename
         try{
             fsPromises.rename(file.filepath, path.join(uploadsFolder, filename))    
             const result = await Staff.create({
