@@ -55,7 +55,7 @@ const updateStaff = async (req, res)=>{
     form.parse(req, async(err, fields, files)=>{
         if(err) return res.json({ok:false, message:"Error parsing the files"})
         const staff = await Staff.findOne({_id: fields.id}).exec()
-        if(files){
+        if(files?.files){
         const file = files.files
         const types = ['image/png', 'image/jpeg', 'image/jpg']
         const typeisvalid = checkFileType(file, types)

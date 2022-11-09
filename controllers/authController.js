@@ -38,7 +38,7 @@ const handlelogin = async(req, res)=>{
         const result = await found.save()
 
         res.cookie('jwt', refreshToken, {httpOnly:true,sameSite:'None', maxAge: 24*60*60*1000})
-        res.json({accessToken})
+        res.json({accessToken, roles})
     }else{
         res.sendStatus(401)
     }
