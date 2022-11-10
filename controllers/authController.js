@@ -25,7 +25,7 @@ const handlelogin = async(req, res)=>{
         const accessToken = jwt.sign(
             {"UserInfo":{"username": found.username}, "roles":roles},
             process.env.ACCESS_TOKEN_SECRET,
-            {expiresIn: '30s'}
+            {expiresIn: '15m'}
         )
         const refreshToken = jwt.sign(
             {"username": found.username},
@@ -35,9 +35,9 @@ const handlelogin = async(req, res)=>{
        
         //saving refreshToken with currrent user
         found.refreshToken = refreshToken
-        const result = await found.save()
+        await found.save()
 
-        res.cookie('jwt', refreshToken, {httpOnly:true,sameSite:'None', maxAge: 24*60*60*1000})
+        res.cookie('jwt', refreshToken, {httpOnly:true,sameSite:'None', secure: true, maxAge: 24*60*60*1000})
         res.json({accessToken, roles})
     }else{
         res.sendStatus(401)

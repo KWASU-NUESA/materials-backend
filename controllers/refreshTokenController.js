@@ -8,10 +8,7 @@ const handlerefreshtoken = async (req, res)=>{
     if(!cookies?.jwt) return res.sendStatus(401)
     const refreshToken = cookies.jwt
    const found = await users.findOne({refreshToken}).exec()
-    
-    if(!found) {
-        console.log('no token')
-        return res.sendStatus(403)} //forbidden
+    if(!found) return res.sendStatus(403) //forbidden
     jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
@@ -21,7 +18,7 @@ const handlerefreshtoken = async (req, res)=>{
             const accessToken = jwt.sign(
                 {"UserInfo": {"username": decoded.username, roles}},
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: '30s'}
+                {expiresIn: '15m'}
             )
             res.json({accessToken, roles})
         }

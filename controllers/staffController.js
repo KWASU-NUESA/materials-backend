@@ -3,6 +3,7 @@ const checkFileType = require('../middleware/checkFileType')
 const Formidable = require('formidable')
 const path = require('path')
 const fsPromises = require('fs').promises
+const fs= require('fs')
 const getAllStaff = async(req,res)=>{
     const staff = await Staff.find()
     if(!staff) return res.status(204).json({'message':'No staff found'})
@@ -45,6 +46,8 @@ const createNewStaff = async(req,res)=>{
 
 
 
+
+
 //update staff
 const updateStaff = async (req, res)=>{
 
@@ -62,14 +65,15 @@ const updateStaff = async (req, res)=>{
         if(!typeisvalid){
             return res.status(400).json({error:`Invalid file type, Images only!`})
         }
-        const filename = encodeURIComponent(file.originalFilename.replace(/&. *;/g, '-'))
+        const filename = file.originalFilename
         try{
             fsPromises.rename(file.filepath, path.join(uploadsFolder, filename))
             
             if(!staff){
             return res.status(204).json({"message": `No staff matches ${req.body.id}`})
             }
-            await fsPromises.unlink(staff.picture)
+            if(fs.existsSync(path.join(__dirname, 'uploads',staff.picture))) await fsPromises.unlink(path.join(__dirname,'uploads',staff.picture))
+             
             staff.picture = filename
         }catch(err){
                 return res.status(400).json({error:err.message})
