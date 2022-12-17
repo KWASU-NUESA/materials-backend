@@ -9,7 +9,6 @@ const app = express()
 const mongoose = require('mongoose')
 const connectDb  =require('./config/dbCon')
 const routeprotect = require('./middleware/normsprotect')
-const verifyJWT = require('./middleware/verifyJwt')
 const PORT = process.env.PORT || 300
 
 
@@ -33,7 +32,6 @@ app.use(cookieParser())
 //allow all static files in public
 app.use(express.static('public'))
 app.use('/public',express.static(path.join(__dirname, 'public')))
-app.use('/uploads',express.static('uploads'))
 
 
 
@@ -41,11 +39,6 @@ app.use('/uploads',express.static('uploads'))
 // routes
 //API dir
 app.use(routeprotect)
-app.use('/register', require('./routes/api/user'))
-app.use('/auth', require('./routes/api/auth'))
-app.use('/refresh', require('./routes/api/refresh'))
-app.use('/logout', require('./routes/api/logout'))
-app.use('/faq', require('./routes/api/faq'))
 
 app.use('/staff', require('./routes/api/staff'))
 app.use('/pdf', require('./routes/api/pdf'))
