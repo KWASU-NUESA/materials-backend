@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {updatePDF, getAllPdf, deletePDF, createNewPDF, deleteOneFile} = require('../../controllers/pdfController')
+const {updatePDF, getAllPdf, deletePDF, createNewPDF, deleteOneFile, getSinglePdf} = require('../../controllers/pdfController')
 
 router.route('/')
     .get(getAllPdf)
@@ -9,4 +9,5 @@ router.route('/')
     .delete(deletePDF)
 
 router.delete('/:id&:index&:category', deleteOneFile)
+router.get('/:id', getSinglePdf)
 module.exports = router

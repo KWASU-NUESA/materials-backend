@@ -110,7 +110,7 @@ const deleteOneFile = async(req, res) =>{
 
 const deletePDF = async (req,res) =>{
     if(!req.body.id){
-        return res.send(400).json({"message":" sorry id is required"})
+        return res.status(400).json({"message":" sorry id is required"})
     }
     const pdf = await Pdf.findOne({_id: req.body.id}).exec()
     if(!pdf){
@@ -126,6 +126,14 @@ const getAllPdf = async(req,res)=>{
     return res.json(pdf)
 }
 
+const getSinglePdf = async(req,res) => {
+    const id = req.params.id
+    if(!id) return res.sendStatus(403)
+    const pdf = await Pdf.findOne({_id: req.params.id}).exec()
+    if(!pdf) return res.status(204).json({message: "No match"})
+    return res.json(pdf)
+}
 
 
-module.exports = {createNewPDF, updatePDF, deletePDF, getAllPdf, deleteOneFile}
+
+module.exports = {createNewPDF, updatePDF, deletePDF, getAllPdf, deleteOneFile, getSinglePdf}

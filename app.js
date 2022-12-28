@@ -40,7 +40,6 @@ app.use('/public',express.static(path.join(__dirname, 'public')))
 //API dir
 app.use(routeprotect)
 
-app.use('/staff', require('./routes/api/staff'))
 app.use('/pdf', require('./routes/api/pdf'))
 
 
